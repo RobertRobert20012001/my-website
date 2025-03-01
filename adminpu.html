@@ -140,24 +140,47 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js";
-        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js";
-        import moment from "https://cdn.jsdelivr.net/npm/moment-jalaali@0.9.1/+esm"; // Importing moment-jalaali for date conversion
+        // اطلاعات کلید شخصی
+        const token = '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';  // توکن شما را اینجا قرار دهید.
+        const repoOwner = 'robertrobert20012001';  // نام کاربری گیت‌هاب شما
+        const repoName = 'my-website';  // نام مخزن شما
+        const branch = 'main';  // نام شاخه (branch) شما (می‌تواند master یا هر شاخه دیگری باشد)
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDQXqxUtfq_0mVSR9r9-Udzt7YaL2ODbgM",
-            authDomain: "test-3687d.firebaseapp.com",
-            databaseURL: "https://test-3687d-default-rtdb.firebaseio.com",
-            projectId: "test-3687d",
-            storageBucket: "test-3687d.firebasestorage.app",
-            messagingSenderId: "1088757597536",
-            appId: "1:1088757597536:web:47166f240f141cf5690a05",
-            measurementId: "G-011J6MLC2Y"
-        };
+        async function saveToGitHub(content, fileName) {
+            const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${fileName}`;
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+
+            const data = {
+                message: 'Add attendance data',
+                content: btoa(content),  // تبدیل محتوای متنی به Base64
+                branch: branch
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    console.log('Data saved successfully to GitHub', result);
+                    alert('اطلاعات با موفقیت در مخزن گیت‌هاب ذخیره شد.');
+                } else {
+                    console.error('Error saving data to GitHub:', result);
+                    alert('خطا در ذخیره‌سازی داده‌ها در گیت‌هاب.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('خطا در ارتباط با گیت‌هاب.');
+            }
+        }
 
         // Handle attendance form submission
         document.getElementById('attendanceForm').addEventListener('submit', function(e) {
@@ -196,48 +219,14 @@
 
             // Check if there is any data to store
             if (Object.keys(attendanceData).length > 0) {
-                // Store all attendance data in a single batch
-                update(ref(database, 'attendance/'), attendanceData)
-                    .then(() => {
-                        alert('حضور و غیاب برای دانش‌آموزان ثبت شد. تاریخ: ' + date + ', ساعت: ' + time);
-                    })
-                    .catch((error) => {
-                        console.error("Error writing new attendance data:", error);
-                    });
+                const content = JSON.stringify(attendanceData, null, 2);  // Convert to JSON string
+
+                // Save the data to GitHub
+                saveToGitHub(content, 'attendance-data.json');
             }
 
             // Reset the form after submission
             document.getElementById('attendanceForm').reset();
-        });
-
-        // Load the last attendance status
-        document.getElementById('loadAttendanceStatus').addEventListener('click', function() {
-            const attendanceRef = ref(database, 'attendance/');
-
-            // خواندن آخرین وضعیت‌ها از Firebase
-            get(attendanceRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const attendanceData = snapshot.val();
-
-                    // به‌روزرسانی وضعیت‌های حضور و غیاب بر اساس داده‌های خوانده شده
-                    Object.keys(attendanceData).forEach(studentId => {
-                        const studentStatus = attendanceData[studentId].status;
-                        const statusSelect = document.getElementById('attendanceStatus' + studentId);
-
-                        // تنظیم وضعیت select به آخرین وضعیت
-                        if (statusSelect) {
-                            statusSelect.value = studentStatus;
-                        }
-                    });
-
-                    alert('وضعیت‌ها با موفقیت بارگذاری شدند.');
-                } else {
-                    alert('هیچ داده‌ای برای بارگذاری وجود ندارد.');
-                }
-            }).catch((error) => {
-                console.error("Error reading data:", error);
-                alert('خطا در بارگذاری داده‌ها.');
-            });
         });
     </script>
 </head>
@@ -322,11 +311,8 @@
             </div>
 
             <button type="submit">ثبت حضور و غیاب</button>
-            <button type="button" id="loadAttendanceStatus">بارگذاری آخرین وضعیت‌ها</button>
         </form>
-        <button class="exit-btn" onclick="window.location.href='index.html'">خروج</button>
-        <button class="parent-btn" onclick="window.location.href='parentpu.html'">رفتن به صفحه بازدید</button>
     </div>
-
+    
 </body>
 </html>
