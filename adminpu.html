@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Notch 1A</title>
 
-    <!-- Adding modern design styles -->
+    <!-- اضافه کردن moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <!-- استایل‌های طراحی -->
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -55,7 +58,6 @@
             text-decoration: underline;
         }
 
-        /* Form styling */
         form {
             display: flex;
             flex-direction: column;
@@ -83,11 +85,6 @@
             box-sizing: border-box;
         }
 
-        input:focus, select:focus {
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-        }
-
         button {
             background-color: #4CAF50;
             color: white;
@@ -109,7 +106,6 @@
             outline: none;
         }
 
-        /* Styling for the exit button */
         .exit-btn {
             background-color: #f29c11;
             color: white;
@@ -138,8 +134,7 @@
         }
     </style>
 
-    <!-- Firebase SDK -->
-    <script type="module">
+    <script>
         // اطلاعات کلید شخصی
         const token = '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';  // توکن شما را اینجا قرار دهید.
         const repoOwner = 'robertrobert20012001';  // نام کاربری گیت‌هاب شما
@@ -187,7 +182,7 @@
             e.preventDefault();
 
             const attendanceData = {};
-            const currentDate = moment();  // Get current date using moment-jalaali
+            const currentDate = moment();  // Get current date using moment.js
             const date = currentDate.format('jYYYY/jMM/jDD');  // Convert to Shamsi (Persian date)
             const time = currentDate.format('HH:mm:ss');  // Current time
 
@@ -310,9 +305,9 @@
                 </select>
             </div>
 
-            <button type="submit">ثبت حضور و غیاب</button>
+            <button type="submit">ثبت 1  </button>
         </form>
     </div>
-    
+
 </body>
 </html>
