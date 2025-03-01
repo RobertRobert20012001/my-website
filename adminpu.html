@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Notch 1A</title>
 
-    <!-- اضافه کردن moment.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
-    <!-- استایل‌های طراحی -->
+    <!-- Adding modern design styles -->
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -58,6 +55,7 @@
             text-decoration: underline;
         }
 
+        /* Form styling */
         form {
             display: flex;
             flex-direction: column;
@@ -85,6 +83,11 @@
             box-sizing: border-box;
         }
 
+        input:focus, select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -106,6 +109,7 @@
             outline: none;
         }
 
+        /* Styling for the exit button */
         .exit-btn {
             background-color: #f29c11;
             color: white;
@@ -134,12 +138,69 @@
         }
     </style>
 
+    <!-- Firebase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment-jalaali@0.9.0/moment-jalaali.js"></script>
+
     <script>
         // اطلاعات کلید شخصی
         const token = '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';  // توکن شما را اینجا قرار دهید.
         const repoOwner = 'robertrobert20012001';  // نام کاربری گیت‌هاب شما
         const repoName = 'my-website';  // نام مخزن شما
         const branch = 'main';  // نام شاخه (branch) شما (می‌تواند master یا هر شاخه دیگری باشد)
+
+        // فقط پس از بارگذاری کامل صفحه رویداد را اضافه می‌کنیم
+        document.addEventListener('DOMContentLoaded', function() {
+            const attendanceForm = document.getElementById('attendanceForm');
+
+            if (attendanceForm) {
+                attendanceForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const attendanceData = {};
+                    const currentDate = moment();  // Get current date using moment-jalaali
+                    const date = currentDate.format('jYYYY/jMM/jDD');  // Convert to Shamsi (Persian date)
+                    const time = currentDate.format('HH:mm:ss');  // Current time
+
+                    // Define student details with IDs and names
+                    const students = [
+                        { id: '1001', name: 'علی سهیل' },
+                        { id: '1002', name: 'محمد رضا جعفر زاده ' },
+                        { id: '1003', name: 'حسام غضنفری ' },
+                        { id: '1004', name: 'مهدی زارع ' },
+                        { id: '1005', name: 'مبین رضایی ' },
+                        { id: '1006', name: 'ابوالفضل رضایی ' },
+                        { id: '1007', name: 'محمد حسین رنجبر ' },
+                        { id: '1008', name: 'فاطمه شعبانپور ' },
+                    ];
+
+                    // Loop over each student and gather data
+                    students.forEach(student => {
+                        const attendanceStatus = document.getElementById('attendanceStatus' + student.id).value;
+
+                        if (attendanceStatus) {
+                            attendanceData[student.id] = {
+                                name: student.name,  // Add the student's name
+                                date: date,
+                                time: time,
+                                status: attendanceStatus
+                            };
+                        }
+                    });
+
+                    // Check if there is any data to store
+                    if (Object.keys(attendanceData).length > 0) {
+                        const content = JSON.stringify(attendanceData, null, 2);  // Convert to JSON string
+
+                        // Save the data to GitHub
+                        saveToGitHub(content, 'attendance-data.json');
+                    }
+
+                    // Reset the form after submission
+                    document.getElementById('attendanceForm').reset();
+                });
+            }
+        });
 
         async function saveToGitHub(content, fileName) {
             const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${fileName}`;
@@ -176,54 +237,8 @@
                 alert('خطا در ارتباط با گیت‌هاب.');
             }
         }
-
-        // Handle attendance form submission
-        document.getElementById('attendanceForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const attendanceData = {};
-            const currentDate = moment();  // Get current date using moment.js
-            const date = currentDate.format('jYYYY/jMM/jDD');  // Convert to Shamsi (Persian date)
-            const time = currentDate.format('HH:mm:ss');  // Current time
-
-            // Define student details with IDs and names
-            const students = [
-                { id: '1001', name: 'علی سهیل' },
-                { id: '1002', name: 'محمد رضا جعفر زاده ' },
-                { id: '1003', name: 'حسام غضنفری ' },
-                { id: '1004', name: 'مهدی زارع ' },
-                { id: '1005', name: 'مبین رضایی ' },
-                { id: '1006', name: 'ابوالفضل رضایی ' },
-                { id: '1007', name: 'محمد حسین رنجبر ' },
-                { id: '1008', name: 'فاطمه شعبانپور ' },
-            ];
-
-            // Loop over each student and gather data
-            students.forEach(student => {
-                const attendanceStatus = document.getElementById('attendanceStatus' + student.id).value;
-
-                if (attendanceStatus) {
-                    attendanceData[student.id] = {
-                        name: student.name,  // Add the student's name
-                        date: date,
-                        time: time,
-                        status: attendanceStatus
-                    };
-                }
-            });
-
-            // Check if there is any data to store
-            if (Object.keys(attendanceData).length > 0) {
-                const content = JSON.stringify(attendanceData, null, 2);  // Convert to JSON string
-
-                // Save the data to GitHub
-                saveToGitHub(content, 'attendance-data.json');
-            }
-
-            // Reset the form after submission
-            document.getElementById('attendanceForm').reset();
-        });
     </script>
+
 </head>
 <body>
 
@@ -305,7 +320,8 @@
                 </select>
             </div>
 
-            <button type="submit">ثبت 1  </button>
+            <!-- Submit Button -->
+            <button type="submit">1</button>
         </form>
     </div>
 
