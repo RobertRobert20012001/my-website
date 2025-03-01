@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Notch 1A</title>
+
+    <!-- Adding modern design styles -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            color: #333;
+            position: relative;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        h1 {
+            color: #2d3b58;
+            margin-top: 0;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #f29c11;
+            font-size: 18px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Form styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        label {
+            font-size: 18px;
+            color: #4CAF50;
+            text-align: right;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        input, select {
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 350px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 0;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 350px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Styling for the exit button */
+        .exit-btn {
+            background-color: #f29c11;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            z-index: 10;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .exit-btn:hover {
+            background-color: #f39c12;
+        }
+
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+    </style>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js";
+        import moment from "https://cdn.jsdelivr.net/npm/moment-jalaali@0.9.1/+esm"; // Importing moment-jalaali for date conversion
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDQXqxUtfq_0mVSR9r9-Udzt7YaL2ODbgM",
+            authDomain: "test-3687d.firebaseapp.com",
+            databaseURL: "https://test-3687d-default-rtdb.firebaseio.com",
+            projectId: "test-3687d",
+            storageBucket: "test-3687d.firebasestorage.app",
+            messagingSenderId: "1088757597536",
+            appId: "1:1088757597536:web:47166f240f141cf5690a05",
+            measurementId: "G-011J6MLC2Y"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Handle attendance form submission
+        document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const attendanceData = {};
+            const currentDate = moment();  // Get current date using moment-jalaali
+            const date = currentDate.format('jYYYY/jMM/jDD');  // Convert to Shamsi (Persian date)
+            const time = currentDate.format('HH:mm:ss');  // Current time
+
+            // Define student details with IDs and names
+            const students = [
+                { id: '1001', name: 'علی سهیل' },
+                { id: '1002', name: 'محمد رضا جعفر زاده ' },
+                { id: '1003', name: 'حسام غضنفری ' },
+                { id: '1004', name: 'مهدی زارع ' },
+                { id: '1005', name: 'مبین رضایی ' },
+                { id: '1006', name: 'ابوالفضل رضایی ' },
+                { id: '1007', name: 'محمد حسین رنجبر ' },
+                { id: '1008', name: 'فاطمه شعبانپور ' },
+            ];
+
+            // Loop over each student and gather data
+            students.forEach(student => {
+                const attendanceStatus = document.getElementById('attendanceStatus' + student.id).value;
+
+                if (attendanceStatus) {
+                    attendanceData[student.id] = {
+                        name: student.name,  // Add the student's name
+                        date: date,
+                        time: time,
+                        status: attendanceStatus
+                    };
+                }
+            });
+
+            // Check if there is any data to store
+            if (Object.keys(attendanceData).length > 0) {
+                // Store all attendance data in a single batch
+                update(ref(database, 'attendance/'), attendanceData)
+                    .then(() => {
+                        alert('حضور و غیاب برای دانش‌آموزان ثبت شد. تاریخ: ' + date + ', ساعت: ' + time);
+                    })
+                    .catch((error) => {
+                        console.error("Error writing new attendance data:", error);
+                    });
+            }
+
+            // Reset the form after submission
+            document.getElementById('attendanceForm').reset();
+        });
+
+        // Load the last attendance status
+        document.getElementById('loadAttendanceStatus').addEventListener('click', function() {
+            const attendanceRef = ref(database, 'attendance/');
+
+            // خواندن آخرین وضعیت‌ها از Firebase
+            get(attendanceRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const attendanceData = snapshot.val();
+
+                    // به‌روزرسانی وضعیت‌های حضور و غیاب بر اساس داده‌های خوانده شده
+                    Object.keys(attendanceData).forEach(studentId => {
+                        const studentStatus = attendanceData[studentId].status;
+                        const statusSelect = document.getElementById('attendanceStatus' + studentId);
+
+                        // تنظیم وضعیت select به آخرین وضعیت
+                        if (statusSelect) {
+                            statusSelect.value = studentStatus;
+                        }
+                    });
+
+                    alert('وضعیت‌ها با موفقیت بارگذاری شدند.');
+                } else {
+                    alert('هیچ داده‌ای برای بارگذاری وجود ندارد.');
+                }
+            }).catch((error) => {
+                console.error("Error reading data:", error);
+                alert('خطا در بارگذاری داده‌ها.');
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Top Notch 1A</h1>
+        <h2>ثبت حضور و غیاب</h2>
+        <h1>خانم رجبی</h1>
+        <form id="attendanceForm">
+            <!-- 10 Student Fields with fixed IDs -->
+            <div class="student-row">
+                <label for="attendanceStatus1001">علی سهیل</label>
+                <select id="attendanceStatus1001" name="attendanceStatus1001" required>
+                    <option value="" disabled selected>انتخاب</option>
+                    <option value="حضور">حضور</option>
+                    <option value="غیاب">غیاب</option>
+                </select>
+            </div>
+
+            <div class="student-row">
+                <label for="attendanceStatus1002">محمد رضا جعفر زاده</label>
+                <select id="attendanceStatus1002" name="attendanceStatus1002" required>
+                    <option value="" disabled selected>انتخاب</option>
+                    <option value="حضور">حضور</option>
+                    <option value="غیاب">غیاب</option>
+                </select>
+            </div>
+
+            <div class="student-row">
+                <label for="attendanceStatus1003">حسام غضنفری</label>
+                <select id="attendanceStatus1003" name="attendanceStatus1003" required>
+                    <option value="" disabled selected>انتخاب</option>
+                    <option value="حضور">حضور</option>
+                    <option value="غیاب">غیاب</option>
+                </select>
+            </div>
+
+            <div class="student-row">
+                <label for="attendanceStatus1004">مهدی زارع</label>
+                <select id="attendanceStatus1004" name="attendanceStatus1004" required>
+                    <option value="" disabled selected>انتخاب</option>
+                    <option value="حضور">حضور</option>
+                    <option value="غیاب">غیاب</option>
+                </select>
+            </div>
+
+            <div class="student-row">
+                <label for="attendanceStatus1005">مبین رضایی</label>
+                <select id="attendanceStatus1005" name="attendanceStatus1005" required>
+                    <option value="" disabled selected>انتخاب</option>
+                    <option value="حضور">حضور</option>
+                    <option value="غیاب">غیاب</option>
+                </select>
+            </div>
+
+            <div class="student-row">
+                <label for="attendanceStatus1006">ابوالفضل رضایی</label>
+                <select id="attendanceStatus1006" name="attendanceStatus1006" required>
+                    <option value="" disabled selected>انتخاب</option>
+                    <option value="حضور">حضور</option>
+                    <option value="غیاب">غیاب</option>
+                </select>
+            </div>
+
+            <div class="student-row">
+                <label for="attendanceStatus1007">محمد حسین رنجبر</label>
+                <select id="attendanceStatus1007" name="attendanceStatus1007" required>
+                    <option value="" disabled selected>انتخاب</option>
+                    <option value="حضور">حضور</option>
+                    <option value="غیاب">غیاب</option>
+                </select>
+            </div>
+
+            <div class="student-row">
+                <label for="attendanceStatus1008">فاطمه شعبانپور</label>
+                <select id="attendanceStatus1008" name="attendanceStatus1008" required>
+                    <option value="" disabled selected>انتخاب</option>
+                    <option value="حضور">حضور</option>
+                    <option value="غیاب">غیاب</option>
+                </select>
+            </div>
+
+            <button type="submit">ثبت حضور و غیاب</button>
+            <button type="button" id="loadAttendanceStatus">بارگذاری آخرین وضعیت‌ها</button>
+        </form>
+        <button class="exit-btn" onclick="window.location.href='index.html'">خروج</button>
+        <button class="parent-btn" onclick="window.location.href='parentpu.html'">رفتن به صفحه بازدید</button>
+    </div>
+
+</body>
+</html>

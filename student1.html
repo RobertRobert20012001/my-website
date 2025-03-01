@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد دانش‌آموز زبان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        #sidebar {
+            width: 250px;
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #sidebar .profile {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #sidebar .profile img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        #sidebar .profile h2 {
+            font-size: 1.2rem;
+        }
+
+        #sidebar .profile p {
+            font-size: 0.9rem;
+        }
+
+        #sidebar .menu {
+            margin-top: 30px;
+        }
+
+        #sidebar .menu p {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #sidebar .menu p:hover {
+            background-color: #1e88e5;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        #content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            margin-left: 20px;
+        }
+
+        #content h1 {
+            color: #4CAF50;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        #studentInfo {
+            margin-bottom: 30px;
+        }
+
+        #studentInfo p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .info-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box span {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .button {
+            background-color: #2196F3;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0b7dda;
+        }
+
+        /* برای اصلاح فاصله‌ها */
+        .student-data {
+            margin-bottom: 15px; /* فاصله کمتر بین اطلاعات */
+        }
+    </style>
+</head>
+<body>
+    <!-- نوار کناری -->
+    <div id="sidebar">
+        <!-- پروفایل دانش‌آموز -->
+        <div class="profile">
+            <img src="https://www.w3schools.com/w3images/avatar2.png" alt="پروفایل دانش‌آموز">
+            <h2 id="studentName">نام دانش‌آموز</h2>
+            <p id="studentLevel">سطح: مبتدی</p>
+        </div>
+
+        <!-- منوی نوار کناری -->
+        <div class="menu">
+            <p>تعداد جلسات: <span id="sessionsCount">0</span></p>
+            <p>آخرین نمره: <span id="lastGrade">0</span></p>
+            <p>وضعیت: <span id="status">در حال بارگذاری...</span></p>
+        </div>
+    </div>
+
+    <!-- محتوای اصلی -->
+    <div id="content">
+        <h1>داشبورد نمرات دانش‌آموز</h1>
+
+        <!-- اطلاعات دانش‌آموز -->
+        <div id="studentInfo">
+            <div class="info-box">
+                <p class="student-data"><span>نام کامل:</span> <span id="fullName">در حال بارگذاری...</span></p>
+                <p class="student-data"><span>تعداد جلسات:</span> <span id="sessionsCountValue">در حال بارگذاری...</span></p>
+                <p class="student-data"><span>آخرین نمره:</span> <span id="lastGradeValue">در حال بارگذاری...</span></p>
+                <p class="student-data"><span>وضعیت:</span> <span id="statusValue">در حال بارگذاری...</span></p>
+            </div>
+            <button class="button" onclick="window.location.href='index.html'">خروج از حساب</button>
+        </div>
+    </div>
+
+    <!-- بارگذاری اسکریپت‌های Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        // پیکربندی Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDQXqxUtfq_0mVSR9r9-Udzt7YaL2ODbgM",
+            authDomain: "test-3687d.firebaseapp.com",
+            projectId: "test-3687d",
+            storageBucket: "test-3687d.firebasestorage.app",
+            messagingSenderId: "1088757597536",
+            appId: "1:1088757597536:web:47166f240f141cf5690a05",
+            measurementId: "G-011J6MLC2Y"
+        };
+
+        // راه‌اندازی Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // دریافت داده‌ها از Firestore
+        const studentId = "student123";  // شناسه دانش‌آموز
+
+        db.collection("students").doc(studentId).get().then((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                console.log("داده‌ها:", data);  // نمایش داده‌ها در کنسول
+
+                // پر کردن داده‌ها در داشبورد
+                const studentName = data.name || "اطلاعات نام موجود نیست";
+                const studentLevel = data.level || "اطلاعات سطح موجود نیست";
+                const sessionsCount = data.sessionsCount || "اطلاعات تعداد جلسات موجود نیست";
+                const lastGrade = data.grade || "اطلاعات نمره موجود نیست";
+                const status = data.status || "اطلاعات وضعیت موجود نیست";
+
+                document.getElementById("studentName").textContent = studentName;
+                document.getElementById("studentLevel").textContent = `سطح: ${studentLevel}`;
+                document.getElementById("sessionsCount").textContent = sessionsCount;
+                document.getElementById("lastGrade").textContent = lastGrade;
+                document.getElementById("status").textContent = status;
+
+                // نمایش اطلاعات در بخش اصلی
+                document.getElementById("fullName").textContent = studentName;
+                document.getElementById("sessionsCountValue").textContent = sessionsCount;
+                document.getElementById("lastGradeValue").textContent = lastGrade;
+                document.getElementById("statusValue").textContent = status;
+            } else {
+                console.log("سند پیدا نشد!");
+                document.getElementById("status").textContent = "اطلاعات موجود نیست";
+            }
+        }).catch((error) => {
+            console.error("خطا در دریافت سند:", error);
+            document.getElementById("status").textContent = "خطا در بارگذاری اطلاعات";
+        });
+    </script>
+</body>
+</html>

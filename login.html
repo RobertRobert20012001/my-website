@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamoon Language Institute - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 30px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        header h2 {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button.login-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #5cb85c;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button.login-btn:hover {
+            background-color: #4cae4c;
+        }
+
+        .forgot-password {
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            font-size: 14px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <header>
+            <h1>Hamoon Language Institute</h1>
+            <h2>Login</h2>
+        </header>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your username">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // جلوگیری از ارسال فرم
+
+            var username = document.getElementById("username").value.trim(); // حذف فضاهای اضافی
+            var password = document.getElementById("password").value.trim(); // حذف فضاهای اضافی
+
+            console.log("Username: " + username); // بررسی مقدار نام کاربری
+            console.log("Password: " + password); // بررسی مقدار رمز عبور
+
+            // بررسی نام کاربری و رمز عبور برای admin
+            if (username === "adminpu" && password === "adminpu") {
+                window.location.href = "adminpu.html"; // صفحه خوش‌آمدگویی برای admin
+            }
+            // بررسی نام کاربری و رمز عبور برای parentpu
+            else if (username === "parentpu" && password === "parentpu") {
+                window.location.href = "parentpu.html"; // صفحه خوش‌آمدگویی برای parentpu
+            }
+            // بررسی نام کاربری و رمز عبور برای student1
+            else if (username === "student1" && password === "student1") {
+                window.location.href = "student1.html"; // صفحه خوش‌آمدگویی برای student1
+            }
+            else {
+                alert("نام کاربری یا رمز عبور اشتباه است");
+            }
+        });
+    </script>
+</body>
+</html>
